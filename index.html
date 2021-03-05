@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+
+<body>
+  <script src=" https://cdnjs.cloudflare.com/ajax/libs/phaser-ce/2.16.1/phaser.min.js"></script>
+  <script>
+    var game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update });
+    function preload() {
+      game.load.spritesheet('dude', './Mandalorian.png', 64, 64);
+      game.load.image('bola', './bola.png');
+      game.load.image('plataforma', './plataforma.png');
+      game.load.image('perder', './perder.png');
+    }
+    var player;
+    var player2;
+    var facing = 'left';
+    var facing2 = 'left';
+    var cursors;
+    var cursors2;
+    var bolas;
+    var perders;
+    var plataformas;
+    var rollRight = 0;
+    var rollLeft = 0;
+    function create() {
+      game.physics.startSystem(Phaser.Physics.ARCADE);
+      game.stage.backgroundColor = '#ff00ff';
+      //game.physics.arcade.gravity.y = 250;
+      player = game.add.sprite(32, 32, 'dude');
+      game.physics.enable(player, Phaser.Physics.ARCADE);
+      player.body.gravity.y = 250;
+      player.body.bounce.y = 0.2;
+      player.body.setSize(24, 8, 20, 50);
+      player.body.collideWorldBounds = true;
+      //4, 5, 6, 7, 13, 14, 15, 16
+
+      player.animations.add('left', [5, 4, 3, 12, 11, 10, 19, 18], 10, true);
+      player.animations.add('right', [0, 1, 2, 7, 8, 9, 14, 15], 10, true);
+      player.animations.add('rollRight', [21, 22, 23, 24, 25, 26, 27], 15, true);
+      player.animations.add('rollLeft', [34, 33, 32, 31, 30, 29, 28], 15, true);
+
+      bolas = game.add.physicsGroup();
+      bolas.create(0, 500, 'bola');
+      bolas.setAll('body.immovable', true);
+
+      plataformas = game.add.physicsGroup();
+      plataformas.create(0, 500, 'plataforma');
+      plataformas.setAll('body.immovable', true);
+
+      perders = game.add.physicsGroup();
+      perders.create(300, 450, 'perder');
+      perders.setAll('body.immovable', true);
+
+      game.camera.follow(player);
+
+      cursors = game.input.keyboard.createCursorKeys();
+      cursors2 = game.input.keyboard.addKeys({ 'up': Phaser.KeyCode.W, 'down': Phaser.KeyCode.S, 'left': Phaser.KeyCode.A, 'right': Phaser.KeyCode.D });
+      console.log(cursors2)
+
+      //Jugador 2 
+      player2 = game.add.sprite(32, 32, 'dude');
+      game.physics.enable(player2, Phaser.Physics.ARCADE);
+      player2.body.gravity.y = 500;
+      player2.body.bounce.y = 0.2;
+      player2.body.setSize(24, 8, 20, 50);
+      player2.body.collideWorldBounds = true;
+      player2.animations.add('lefte', [5, 4, 3, 12, 11, 10, 19, 18], 10, true);
+      player2.animations.add('righte', [0, 1, 2, 7, 8, 9, 14, 15], 10, true);
+    }
+    function update() {
+      console.log(player.frame)
+      game.physics.arcade.collide(player, plataformas);
+      game.physics.arcade.overlap(player, perders, morir, null, this);
+      game.physics.arcade.overlap(player, bolas, todobien, null, this);
+      game.physics.arcade.collide(player2, plataformas);
+      game.physics.arcade.overlap(player2, perders, morir, null, this);
+      game.physics.arcade.overlap(player2, bolas, todobien, null, this);
+
+      player.body.velocity.x = 0;
+      player2.body.velocity.x = 0;
+
+
+      //Player 1 Controles
+      if (cursors.right.isDown && cursors.down.isDown) {
+        rollRight = true;
+      }
+
+      if (rollRight) {
+        player.animations.play('rollRight');
+        if (player.frame == 27) {
+          player.animations.stop('rollRight');
+          rollRight = false;
+        }
+      }
+
+      if (cursors.left.isDown && cursors.down.isDown) {
+        rollLeft = true;
+      }
+      if (rollLeft) {
+        player.animations.play('rollLeft');
+        if (player.frame == 28) {
+          player.animations.stop('rollLeft');
+          rollLeft = false;
+        }
+      }
+      if (cursors.left.isDown) {
+        player.body.velocity.x = -150;
+        if (facing != 'left') {
+          player.animations.play('left');
+          facing = 'left';
+        }
+      }
+      else if (cursors.right.isDown) {
+        player.body.velocity.x = 150;
+        if (facing != 'right') {
+          player.animations.play('right');
+          facing = 'right';
+        }
+      }
+      else {
+        if (facing != 'idle') {
+          player.animations.stop();
+          if (facing == 'left') {
+            player.frame = 17;
+          }
+          else {
+            player.frame = 16;
+          }
+          facing = 'idle';
+        }
+      }
+      if (cursors.up.isDown) {
+        player.body.velocity.y = -250;
+        jumpTimer = game.time.now + 750;
+      }
+
+      //Player 2 Controles
+
+      if (cursors2.left.isDown) {
+        player2.body.velocity.x = -150;
+
+        if (facing2 != 'left') {
+
+          player2.animations.play('lefte');
+          facing2 = 'left';
+        }
+      }
+      else if (cursors2.right.isDown) {
+
+        player2.body.velocity.x = 150;
+
+        if (facing2 != 'right') {
+
+          player2.animations.play('righte');
+          facing2 = 'right';
+        }
+      }
+      else {
+        if (facing2 != 'idle') {
+
+          player2.animations.stop();
+
+          if (facing2 == 'left') {
+
+            player2.frame = 17;
+          }
+          else {
+
+            player2.frame = 16;
+          }
+
+          facing2 = 'idle';
+        }
+      }
+
+      if (cursors2.up.isDown) {
+        player2.body.velocity.y = -250;
+        jumpTimer = game.time.now + 750;
+      }
+    }
+    function morir(player, perders) {
+      player.kill();
+    }
+
+    function todobien(player, perders) {
+      console.log("ta perron");
+    }
+
+  </script>
+</body>
+
+</html>
