@@ -33,3 +33,48 @@ function crearPlataformas(plataformas, game) {
   plataformas.setAll("body.immovable", true);
   return plataformas;
 }
+
+function crearLetrerosJugadores(nombreJugador, game, player, color, letrero) {
+  nombreJugador = game.add.text(
+    player.body.position.x,
+    player.body.position.y,
+    letrero,
+    {
+      font: "20px Arial",
+      fill: color,
+      fontWeight: "bold",
+      align: "center",
+    }
+  );
+  return nombreJugador;
+}
+
+function crearTextoTiempo(tiempoTexto, game, tiempo) {
+  tiempoTexto = game.add.text(game.world.centerX, 100, tiempo, {
+    font: "65px Arial",
+    fill: "#ffff00",
+    align: "center",
+  });
+  tiempoTexto.anchor.set(0.5);
+  return tiempoTexto;
+}
+
+function crearFondo(game) {
+  fondo = game.add.sprite(0, 0, "fondo");
+  pepitas = game.add.sprite(960, 0, "pepitas");
+  pepitas2 = game.add.sprite(-960, 0, "pepitas");
+  pepitas3 = game.add.sprite(-2880, 0, "pepitas");
+  montañas = game.add.sprite(960, 0, "montañas");
+  montañas2 = game.add.sprite(-960, 0, "montañas");
+  montañas3 = game.add.sprite(-2880, 0, "montañas");
+
+  return {
+    fondo,
+    pepitas,
+    pepitas2,
+    pepitas3,
+    montañas,
+    montañas2,
+    montañas3,
+  };
+}
