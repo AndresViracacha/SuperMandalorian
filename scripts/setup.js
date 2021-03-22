@@ -1,8 +1,7 @@
-function crearPersonaje(player, game, Phaser) {
-  player = game.add.sprite(32, 32, "dude");
+function crearPersonaje(player, game, Phaser, skin) {
+  player = game.add.sprite(32, 32, skin);
   game.physics.enable(player, Phaser.Physics.ARCADE);
   player.body.gravity.y = 250;
-  player.body.bounce.y = 0.2;
   player.body.setSize(24, 58, 20, 0);
   player.body.collideWorldBounds = true;
   player.animations.add("left", [5, 4, 3, 12, 11, 10, 19, 18], 10, true);

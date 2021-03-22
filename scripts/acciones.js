@@ -3,15 +3,12 @@ function saltar(player, cursors) {
     (cursors.up.isDown && player.body.onFloor()) ||
     (player.body.touching.down && cursors.up.isDown)
   ) {
-    player.body.velocity.y = -750;
+    player.body.velocity.y = -550;
   }
 }
 function disparo(jugador, bullets) {
   bullets.kill();
   jugador.vida = jugador.vida - 10;
-  if (jugador.vida <= 0) {
-    jugador.kill();
-  }
 }
 
 function fireBullet(facing, bullets, player, bulletTime, direction) {

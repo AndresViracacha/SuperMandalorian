@@ -85,4 +85,12 @@ function ubicarLetreroJugador(nombreJugador, nombreJugador2, player, player2) {
   nombreJugador.position.y = player.position.y - 35;
   nombreJugador2.position.x = player2.position.x;
   nombreJugador2.position.y = player2.position.y - 35;
+  if (!player2.alive) {
+    nombreJugador2.position.x = 10000;
+    nombreJugador2.position.y = 10000;
+  }
+  if (!player.alive) {
+    nombreJugador.position.x = 10000;
+    nombreJugador.position.y = 10000;
+  }
 }
