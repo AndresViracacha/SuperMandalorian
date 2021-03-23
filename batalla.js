@@ -6,7 +6,7 @@ var inicio = false,
   player2,
   hpPlayer = 100,
   hpPlayer2 = 100,
-  tiempo = 45,
+  tiempo = 4500,
   tiempoTexto,
   textoCarga,
   text,
@@ -40,11 +40,22 @@ var inicio = false,
   backSound,
   aliens,
   eleccion,
-  juegoTerminado = false;
+  juegoTerminado = false,
+  map,
+  layer;
 var firingTimer = 0;
 var livingEnemies = [];
 var batalla = {
   preload: function () {
+    //tiledmap
+    game.load.tilemap(
+      "map",
+      "./assets/tile/sinnombre.csv",
+      null,
+      Phaser.Tilemap.CSV
+    );
+    //patron
+    game.load.image("tiles", "./assets/img/pisoTiled2.png");
     setup();
   },
 
@@ -60,6 +71,12 @@ var batalla = {
       montañas2,
       montañas3,
     } = crearFondo(game);
+    map = game.add.tilemap("map", 100, 100);
+    map.addTilesetImage("tiles");
+    layer = map.createLayer(0);
+    layer.resizeWorld();
+    map.setCollisionBetween(1);
+
     //Musica
     musica = game.input.keyboard.addKey(Phaser.Keyboard.P);
     //Configuracion del jugador
@@ -89,6 +106,9 @@ var batalla = {
     barraDeVida2.scale.y = 1;
 
     plataformas = crearPlataformas(plataformas, game);
+
+    plataformas.children[0].body.width = window.width;
+    plataformas.children[0].visible = false;
     backSound = new Phaser.Sound(game, "backSound", 0.5, true);
 
     let { cursors, cursors2, fireButton, fireButton2 } = controles(
@@ -149,6 +169,8 @@ var batalla = {
     aliens.enableBody = true;
     aliens.physicsBodyType = Phaser.Physics.ARCADE;
     tiempoTexto = crearTextoTiempo(tiempoTexto, game, tiempo);
+
+    //--
   },
 
   update: function () {
@@ -201,6 +223,9 @@ var batalla = {
 
         ubicarLetreroJugador(nombreJugador, nombreJugador2, player, player2);
 
+        game.physics.arcade.collide(player2, plataformas.children[0]);
+        game.physics.arcade.collide(player, plataformas.children[0]);
+
         //Colision jugador1
         if (cursors.down.justDown) {
           clickDelay = this.time.now - lastTime;
@@ -211,15 +236,14 @@ var batalla = {
             clickDelay = 1000;
           }, 250);
         } else {
-          if (
-            (player.position.y < 240 &&
-              player.position.x > 0 &&
-              player.position.x < 255) ||
-            (player.position.y < 490 &&
-              player.position.x > 500 &&
-              player.position.x < 755)
-          ) {
-            game.physics.arcade.collide(player, plataformas);
+          for (let i = 1; i < plataformas.children.length; i++) {
+            if (
+              player.position.y < plataformas.children[i].position.y &&
+              player.position.x > plataformas.children[i].position.x - 30 &&
+              player.position.x < plataformas.children[i].position.x + 250
+            ) {
+              game.physics.arcade.collide(player, plataformas);
+            }
           }
         }
         //Colision jugador2
@@ -232,15 +256,14 @@ var batalla = {
             clickDelay2 = 1000;
           }, 250);
         } else {
-          if (
-            (player2.position.y < 240 &&
-              player2.position.x > 0 &&
-              player2.position.x < 255) ||
-            (player2.position.y < 490 &&
-              player2.position.x > 500 &&
-              player2.position.x < 755)
-          ) {
-            game.physics.arcade.collide(player2, plataformas);
+          for (let i = 1; i < plataformas.children.length; i++) {
+            if (
+              player2.position.y < plataformas.children[i].position.y &&
+              player2.position.x > plataformas.children[i].position.x - 30 &&
+              player2.position.x < plataformas.children[i].position.x + 250
+            ) {
+              game.physics.arcade.collide(player2, plataformas);
+            }
           }
         }
 
@@ -329,6 +352,8 @@ var batalla = {
     backSound.play();
     button.kill();
     inicio = true;
+    player.body.gravity.y = 250;
+    player2.body.gravity.y = 250;
   },
   createAliens: function () {
     for (var y = 0; y < 1; y++) {

@@ -13,7 +13,7 @@ function setup() {
   game.load.image("seleccionPersonaje", "./assets/img/seleccionaPersonaje.png");
   game.load.image("tituloJuego", "./assets/img/Titulo.png");
   game.load.spritesheet("dude", "./assets/img/Mandalorian.png", 64, 64);
-  game.load.image("plataforma", "./assets/img/plataforma.png");
+  game.load.image("plataforma", "./assets/img/plataforma2.png");
   game.load.image("fondo", "./assets/img/fondoo.png");
   game.load.image("pepitas", "./assets/img/pepitas.png");
   game.load.image("montañas", "./assets/img/montañas.png");
